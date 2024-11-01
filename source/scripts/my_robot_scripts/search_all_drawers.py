@@ -25,11 +25,13 @@ from sklearn.cluster import DBSCAN, KMeans
 from utils import recursive_config
 from utils.camera_geometry import plane_fitting_open3d
 from utils.coordinates import Pose2D, Pose3D, average_pose3Ds, pose_distanced
-from utils.drawer_detection import drawer_handle_matches
-from utils.drawer_detection import predict_yolodrawer as drawer_predict
+from utils.docker_interfaces.drawer_detection import drawer_handle_matches
+from utils.docker_interfaces.drawer_detection import (
+    predict_yolodrawer as drawer_predict,
+)
 from utils.importer import PointCloud
-from utils.object_detetion import BBox, Detection, Match
-from utils.openmask_interface import get_mask_points
+from utils.docker_interfaces.object_detection import BBox, Detection, Match
+from utils.docker_interfaces.openmask_interface import get_item_pcd
 from utils.point_clouds import body_planning_mult_furthest
 from utils.recursive_config import Config
 from utils.singletons import (
@@ -40,7 +42,7 @@ from utils.singletons import (
     RobotStateClientSingleton,
     WorldObjectClientSingleton,
 )
-from utils.zero_shot_object_detection import detect_objects
+from utils.docker_interfaces.zero_shot_object_detection import detect_objects
 
 frame_transformer = FrameTransformerSingleton()
 graph_nav_client = GraphNavClientSingleton()
@@ -457,7 +459,7 @@ class _DynamicDrawers(ControlFunction):
 
         draw_det_pairs = []
         for idx in indices:
-            cabinet_pcd, env_pcd = get_mask_points(
+            cabinet_pcd, env_pcd = get_item_pcd(
                 "cabinet, shelf", config, idx=idx, vis_block=False
             )
             cabinet_centers = split_and_calculate_centers(

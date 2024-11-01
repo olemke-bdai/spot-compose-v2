@@ -7,7 +7,7 @@ from typing import Optional
 import numpy as np
 
 import cv2
-from utils.docker_communication import save_files, send_request
+from utils.docker_interfaces.docker_communication import save_files, send_request
 from utils.files import prep_tmp_path
 from utils.recursive_config import Config
 
@@ -42,7 +42,7 @@ def predict(
         logger.info(f"Sending request to {address}!")
     contents = send_request(address, paths_dict, kwargs, timeout, tmp_path)
     if logger:
-        logger.info(f"Received response!")
+        logger.info("Received response!")
 
     if len(contents) == 0:
         return None
@@ -68,7 +68,7 @@ def predict(
 
 def _test_pose() -> None:
     config = Config()
-    base_path = config.get_subpath("data")
+    base_path = config.get_subpath("resources")
     image_name = "human.jpg"
     # image_name = "landscape.png"
     img_path = os.path.join(base_path, "test", image_name)

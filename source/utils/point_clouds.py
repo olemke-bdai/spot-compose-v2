@@ -13,7 +13,7 @@ import open3d as o3d
 from utils import recursive_config
 from utils.coordinates import Pose3D, get_circle_points
 from utils.importer import PointCloud
-from utils.mask3D_interface import get_coordinates_from_item
+from utils.docker_interfaces.mask3D_interface import get_coordinates_from_item
 
 
 def add_coordinate_system(
@@ -277,16 +277,16 @@ def body_planning_mult_furthest(
     vis_block: bool = False,
 ) -> list[Pose3D]:
     """
-    Plans a position for the robot to go to given a cloud *without* the item to be
-    grasped, as well as point to be grasped.
+    Plans a position for the robot to go to given a cloud *without* the item to
+    be grasped, as well as point to be grasped.
     :param env_cloud: the point cloud *without* the item
     :param target: target coordinates for grasping
     :param floor_height_thresh: z value under which to cut floor
     :param body_height: height of robot body
     :param min_distance: minimum distance from object
     :param max_distance: max distance from object
-    :param lam: trade-off between distance to obstacles and distance to target, higher
-    lam, more emphasis on distance to target
+    :param lam: trade-off between distance to obstacles and distance to target,
+    higher lam, more emphasis on distance to target
     :param n_best: number of positions to return
     :param vis_block: whether to visualize the position
     :return: list of viable coordinates ranked by score

@@ -39,7 +39,7 @@ from scipy.interpolate import griddata
 from utils import vis
 from utils.coordinates import Pose3D
 from utils.importer import PointCloud, Vector3dVector
-from utils.object_detetion import BBox
+from utils.docker_interfaces.object_detection import BBox
 from utils.point_clouds import icp
 from utils.recursive_config import Config
 from utils.singletons import (
@@ -589,7 +589,11 @@ def localize_from_images(config: Config, vis_block: bool = False) -> str:
 
     # get offset between prediction and ground truth
     ground_tform_fiducial = icp(
-        pcd_ground, pcd_fiducial, threshold=0.10, max_iteration=100
+        pcd_ground,
+        pcd_fiducial,
+        threshold=0.10,
+        max_iteration=100,
+        point_to_point=False,
     )
     ground_tform_body = ground_tform_fiducial @ fiducial_tform_body
 

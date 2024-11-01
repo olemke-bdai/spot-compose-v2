@@ -8,11 +8,10 @@ from typing import Optional
 import numpy as np
 
 import cv2
-from matplotlib import pyplot as plt
 from scipy.optimize import linear_sum_assignment
-from utils.docker_communication import save_files, send_request
+from utils.docker_interfaces.docker_communication import save_files, send_request
 from utils.files import prep_tmp_path
-from utils.object_detetion import BBox, Detection, Match
+from utils.docker_interfaces.object_detection import BBox, Detection, Match
 from utils.recursive_config import Config
 from utils.vis import draw_boxes
 
@@ -121,7 +120,6 @@ def predict_darknet(
     return detections
 
 
-# noinspection PyTypeChecker
 def drawer_handle_matches(detections: list[Detection]) -> list[Match]:
     def calculate_ioa(drawer: Detection, handle: Detection) -> float:
         _, _, drawer_bbox = drawer
@@ -131,13 +129,13 @@ def drawer_handle_matches(detections: list[Detection]) -> list[Match]:
         handle_left, handle_top, handle_right, handle_bottom = handle_bbox
         drawer_left, drawer_top, drawer_right, drawer_bottom = drawer_bbox
 
-        # Calculate the overlap between the bounding boxes
+        # calculate the overlap between the bounding boxes
         overlap_left = max(handle_left, drawer_left)
         overlap_top = max(handle_top, drawer_top)
         overlap_right = min(handle_right, drawer_right)
         overlap_bottom = min(handle_bottom, drawer_bottom)
 
-        # Calculate the area of the overlap
+        # calculate the area of the overlap
         overlap_width = max(0, overlap_right - overlap_left)
         overlap_height = max(0, overlap_bottom - overlap_top)
 
@@ -192,22 +190,32 @@ def drawer_handle_matches(detections: list[Detection]) -> list[Match]:
 ########################################################################################
 
 
-def _test_pose() -> None:
+def _test_pose() -> list[list[Detection]]:
     config = Config()
-    base_path = config.get_subpath("data")
-    dir_path = os.path.join(base_path, "test", "iCloud Photos")
+    base_path = config.get_subpath("resources")
+    dir_path = os.path.join(base_path, "images")
     image_names = [
-        "IMG_1885.jpg",
+        "img_drawers.jpg",
     ]
+
+    detectionss = []
     for image_name in image_names:
         img_path = os.path.join(dir_path, image_name)
         image = cv2.imread(img_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        _ = predict_yolodrawer(image, config, vis_block=True)
+        detections = predict_yolodrawer(image, config, vis_block=True)
+        detectionss.append(detections)
+
+    return detectionss
+
+
+def main() -> None:
+    start = time.time_ns()
+    detectionss = _test_pose()
+    end = time.time_ns()
+    print(end - start)
+    print(f"{detectionss=}")
 
 
 if __name__ == "__main__":
-    start = time.time_ns()
-    _test_pose()
-    end = time.time_ns()
-    print(end - start)
+    main()

@@ -9,7 +9,7 @@ import cv2
 import open3d as o3d
 from utils.coordinates import Pose3D
 from utils.importer import Vector3dVector
-from utils.mask3D_interface import get_all_item_point_clouds, get_coordinates_from_item
+from utils.docker_interfaces.mask3D_interface import get_all_item_point_clouds, get_coordinates_from_item
 from utils.recursive_config import Config
 
 
@@ -38,7 +38,7 @@ def render_depth(geometries, camera):
 def main():
     # paths
     config = Config()
-    data_path = config.get_subpath("data")
+    data_path = config.get_subpath("resources")
     pcd_name = config["pre_scanned_graphs"]["high_res"]
     aligned_pcd_dir = os.path.join(data_path, "aligned_point_clouds", pcd_name)
     pre_pcd_dir = os.path.join(data_path, "prescans", pcd_name)
